@@ -1,0 +1,101 @@
+-- USE School 
+
+-- CREATE TABLE Class
+-- (
+--     ClassID INT NOT NULL,
+--     PRIMARY KEY(ClassID),
+--     ClassName varchar(255) NOT NULL,
+--     Class_DESCRIPTION VARCHAR(255),
+--     ClassStatus VARCHAR(255) NOT NULL,
+--     CHECK(ClassStatus = 'A' OR ClassStatus = 'NA' OR ClassStatus = 'AC'),
+--     ClassStartDate DATE ,
+--     ClassEndDate DATE ,
+--     CHECK(ClassEndDate >ClassStartDate),
+--     ClassGrade INT NOT NULL,
+--     CHECK(ClassGrade = 1 OR ClassGrade= 2 OR ClassGrade= 3 OR ClassGrade=4 
+--     OR ClassGrade=5 OR ClassGrade=6 OR ClassGrade=7
+--     OR ClassGrade=8 OR ClassGrade=9 OR ClassGrade=10
+--     OR ClassGrade=11 OR ClassGrade=12),
+--     ClassTeacherName VARCHAR(255),
+--     ClassSubject VARCHAR(255) NOT NULL
+-- );
+
+-- CREATE TABLE Student
+-- (
+--     StudentNationalID BIGINT NOT NULL,
+--     PRIMARY KEY(StudentNationalID),
+--     check (StudentNationalID like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
+--     StudentUserName VARCHAR(255) NOT NULL,
+--     StudentPassword VARCHAR(255) NOT NULL,
+--     StudentName VARCHAR(255) NOT NULL,
+--     StudentLastName VARCHAR(255) NOT NULL,
+--     StudentEmail VARCHAR(255),
+--     ClassID  INT FOREIGN KEY REFERENCES Class(ClassID)
+--     ON DELETE CASCADE  ,
+--     StudentBirthDate DATE,
+--     StudentAddress VARCHAR(255),
+--     StudentPhone BIGINT ,
+--     check (StudentPhone like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
+-- );
+
+-- CREATE TABLE Schedule
+-- (
+--     ScheduleID INT NOT NULL,
+--     PRIMARY KEY (ScheduleID),
+--     ClassID INT  FOREIGN KEY REFERENCES Class(ClassID)
+--     ON DELETE CASCADE,
+--     ScheduleWeekDay VARCHAR(255),
+--     CHECK (ScheduleWeekDay = 'SUN' OR ScheduleWeekDay = 'MON' OR ScheduleWeekDay = 'TUE' OR ScheduleWeekDay = 'WED'
+--     OR ScheduleWeekDay = 'THU' OR ScheduleWeekDay = 'FRI'),
+--     StartHour TIME, 
+--     EndHour TIME
+-- );
+
+-- CREATE TABLE HomeWork
+-- (
+--     HomeWorkID INT NOT NULL,
+--     PRIMARY KEY(HomeWorkID),
+--     HomeWorkSubject VARCHAR(255) NOT NULL,
+--     HDescription VARCHAR(255),
+--     HomeWorkFile VARCHAR(255),
+--     ClassID INT  FOREIGN KEY REFERENCES Class(ClassID)
+--     ON DELETE CASCADE,
+--     Creation DATE,
+--     UploadDate DATE,
+--     CHECK(UploadDate >= Creation)
+-- );
+
+-- CREATE TABLE HomeWorkAnswers
+-- (
+--     HomeWorkAnswersID INT NOT NULL,
+--     PRIMARY KEY(HomeWorkAnswersID),
+--     HDescription VARCHAR(255),
+--     HomeWorkFile VARCHAR(255),
+--     HomeWorkID INT FOREIGN KEY REFERENCES HomeWork(HomeWorkID)  ON DELETE CASCADE,
+--     StudentID BIGINT FOREIGN KEY REFERENCES Student(StudentNationalID) ON DELETE NO ACTION,
+--     HSubject VARCHAR(255),
+--     CreationDate DATE,
+--     UploadDate DATE,
+--     UNIQUE(HomeWorkID,StudentID)
+-- );
+    
+-- CREATE TABLE Scores
+-- (
+--     ScoresID INT IDENTITY(1,1) NOT NULL,
+--     PRIMARY KEY (ScoresID),
+--     HomeWorkID INT FOREIGN KEY REFERENCES HomeWork(HomeWorkID) ON DELETE CASCADE,
+--     HomeWorkAnswersID INT FOREIGN KEY REFERENCES HomeWorkAnswers(HomeWorkAnswersID)ON DELETE NO ACTION ,
+--     Score INT,
+--     CHECK(Score > 0 AND Score <100),
+--     UNIQUE(HomeWorkID,HomeWorkAnswersID)
+-- );
+
+-- GO 
+-- CREATE TRIGGER ins ON  HomeWorkAnswers
+-- FOR INSERT 
+-- AS
+-- BEGIN
+-- INSERT INTO Scores (HomeWorkID,HomeWorkAnswersID,Score)
+-- SELECT i.HomeWorkID, i.HomeWorkAnswersID ,NULL
+-- FROM INSERTED i
+-- END;
